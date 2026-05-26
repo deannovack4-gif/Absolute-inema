@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@100..900&display=swap');
 
 @font-face {
@@ -19,7 +25,7 @@ img {
 
 body {
     /* Use site texture as page background so it's continuous across sections */
-    background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(10,10,10,0.6)), url('images/bg.jpg') center/cover fixed;
+    background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(10,10,10,0.6)), url('images/bg.jpg') center/cover no-repeat;
     background-color: #000000;
     font-family: 'M PLUS 1', sans-serif;
     color: #ffffff;
@@ -31,7 +37,7 @@ body {
 /* Container */
 .container {
     max-width: 1400px;
-    margin: 0 auto;
+    margin: 0;
     padding: 0 20px;
     width: 100%;
 }
@@ -191,17 +197,6 @@ body {
     justify-content: center;
 }
 
-.movie-card {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    transition: transform 0.3s ease;
-    max-width: 160px;
-    margin: 0 auto;
-    width: 100%;
-}
-
 .movie-card:hover {
     transform: scale(1.1);
 }
@@ -217,8 +212,8 @@ body {
 
 /* Movie Showcase Section */
 .movie-showcase {
-    padding: 60px 0;
-    background: linear-gradient(0deg, #1a1a1a 0%, #000000 100%);
+    padding: 40px 0;
+    min-height: auto;
 }
 
 .showcase-container {
@@ -254,21 +249,6 @@ body {
     gap: 15px;
     justify-content: center;
     flex-wrap: wrap;
-}
-
-.action-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 10px;
-    transition: transform 0.2s ease, background-color 0.2s;
-    border-radius: 50%;
-    background-color: rgba(214, 180, 56, 0.1);
-}
-
-.action-btn:hover {
-    transform: scale(1.15);
-    background-color: rgba(214, 180, 56, 0.25);
 }
 
 .action-icon {
@@ -457,7 +437,7 @@ body {
 
     .hero-title-top,
     .hero-title-bottom {
-        font-size: 10vw;
+        font-size: clamp(2rem, 9vw, 4rem);
     }
     
     .hero-subtitle {
@@ -468,27 +448,21 @@ body {
         grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
         gap: 15px;
     }
-    
-    .movie-card {
-        max-width: 140px;
-    }
 }
 
 @media (max-width: 480px) {
+
     .hero-title-top,
     .hero-title-bottom {
         font-size: 10vw;
-        .movie-poster,
-.filtered-movie-poster {
-    max-width: 120px;
-    margin: 0 auto;
-}
-
-.movie-card,
-.filtered-movie-card {
-    transform: scale(0.9);
-}
     }
+
+    .movie-poster,
+    .filtered-movie-poster {
+        max-width: 120px;
+        margin: 0 auto;
+    }
+}
 
     .hero-subtitle {
         font-size: 5vw;
@@ -527,12 +501,8 @@ body {
     }
 
     .popular-grid {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
         gap: 12px;
-    }
-
-    .movie-card {
-        max-width: 100%;
     }
 
     .movie-actions {
@@ -640,7 +610,7 @@ body {
     }
 
     .filtered-movies-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
         gap: 10px;
     }
 }
@@ -648,11 +618,6 @@ body {
 /* 动画已移除 - 不再有淡入效果 */
 
 /* Анимация и состояния для кнопок действий */
-.action-btn {
-    position: relative;
-    overflow: hidden;
-}
-
 .action-btn.active {
     background-color: rgba(255, 0, 0, 0.3);
     transform: scale(1.05);
@@ -1076,10 +1041,12 @@ body {
     transition: transform 0.2s ease, background-color 0.2s;
     border-radius: 50%;
     background-color: rgba(214, 180, 56, 0.1);
+    position: relative;
+    overflow: hidden;
 }
 
 .action-btn:hover {
-    transform: scale(1.1);
+    transform: scale(1.15);
     background-color: rgba(214, 180, 56, 0.25);
 }
 
@@ -2671,4 +2638,39 @@ input[type="number"] {
 .custom-option:hover {
     background: rgba(214,180,56,0.25);
     color: #d6b538;
+}
+
+/* MOBILE TOUCH FIXES */
+@media (hover: none) {
+
+    .movie-card:hover,
+    .filtered-movie-card:hover,
+    .action-btn:hover,
+    .nav-btn:hover,
+    .filters-toggle-btn:hover,
+    .control-btn:hover {
+        transform: none;
+    }
+
+    .movie-card:hover .movie-poster,
+    .filtered-movie-card:hover .filtered-movie-poster {
+        transform: none;
+    }
+
+    .movie-overlay {
+        opacity: 1;
+        background: rgba(0,0,0,0.55);
+    }
+    .filter-modal-content,
+.search-modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+    .nav-btn,
+.control-btn,
+.comment-submit,
+.apply-filters-btn,
+.reset-filters-btn {
+    min-height: 44px;
+}
 }
