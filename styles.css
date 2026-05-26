@@ -478,6 +478,16 @@ body {
     .hero-title-top,
     .hero-title-bottom {
         font-size: 10vw;
+        .movie-poster,
+.filtered-movie-poster {
+    max-width: 120px;
+    margin: 0 auto;
+}
+
+.movie-card,
+.filtered-movie-card {
+    transform: scale(0.9);
+}
     }
 
     .hero-subtitle {
