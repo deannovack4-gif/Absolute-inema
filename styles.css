@@ -1,9 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=M+PLUS+1:wght@100..900&display=swap');
 
 @font-face {
-    font-family: 'rimma_sans';
-    src: url('fonts/RIMMA_SANS-BOLD.ttf') format('truetype');
-    font-weight: bold;
+    font-family: 'Rimma';
+    src: url('fonts/rimma-sans-bold.ttf') format('truetype');
+    font-weight: normal;
     font-style: normal;
 }
 /* Плавная прокрутка для всей страницы */
