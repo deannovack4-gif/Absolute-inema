@@ -288,15 +288,18 @@ body {
     flex-wrap: wrap;
 }
 
-/* ===== ИСПРАВЛЕННЫЕ КНОПКИ СЛАЙДЕРА (предыдущая/следующая) ===== */
+/* Улучшенные кнопки слайдера со стрелками */
 .action-btn {
     background: rgba(0, 0, 0, 0.7);
-    border: 1px solid #D6B538;
+    border: 2px solid #D6B538;
     border-radius: 50%;
     cursor: pointer;
     padding: 10px;
     transition: all 0.2s ease;
     backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .action-btn:hover {
@@ -306,11 +309,14 @@ body {
 }
 
 .action-icon {
-    width: 28px;
-    height: 28px;
-    object-fit: contain;
-    filter: brightness(0) invert(1);
     display: block;
+    stroke: #ffffff;
+    fill: none;
+    transition: stroke 0.2s;
+}
+
+.action-btn:hover .action-icon {
+    stroke: #000000;
 }
 
 /* Обсуждения */
@@ -621,7 +627,16 @@ body {
     background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
 }
 
-/* ===== ИСПРАВЛЕННАЯ КНОПКА ФИЛЬТРОВ ===== */
+/* Центрирование кнопки "фильтры" */
+.filters-header {
+    text-align: center;
+    margin-bottom: 30px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* Стиль кнопки фильтров */
 .filters-toggle-btn {
     background: #D6B538;
     border: none;
@@ -642,6 +657,17 @@ body {
     background: #e6c45e;
     transform: scale(1.02);
     box-shadow: 0 4px 12px rgba(214, 180, 56, 0.5);
+}
+
+/* Заголовок "каталог" */
+.filtered-title {
+    font-family: 'Rimma', sans-serif;
+    font-size: 25px;
+    color: #D6B538;
+    text-align: center;
+    margin-bottom: 30px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
 }
 
 .filter-modal {
@@ -1031,7 +1057,7 @@ body {
     border-top: 1px solid rgba(214, 180, 56, 0.3);
 }
 
-/* ===== ИСПРАВЛЕННАЯ КНОПКА "НАВЕРХ" В ФУТЕРЕ (без фона) ===== */
+/* Кнопка "наверх" без фона */
 .footer-top-btn {
     background: transparent;
     border: none;
@@ -1202,7 +1228,6 @@ body {
     .nav-btn, .control-btn, .comment-submit, .donation-btn, .star-btn {
         min-height: 44px;
     }
-    /* Кнопка фильтров на мобильных */
     .filters-toggle-btn {
         padding: 10px 24px;
         font-size: 16px;
@@ -1227,46 +1252,4 @@ body {
 /* Убираем скролл при открытых модалках */
 body.modal-open {
     overflow: hidden;
-}
-
-/* Улучшенные кнопки слайдера со стрелками */
-.action-btn {
-    background: rgba(0, 0, 0, 0.7);
-    border: 2px solid #D6B538;
-    border-radius: 50%;
-    cursor: pointer;
-    padding: 10px;
-    transition: all 0.2s ease;
-    backdrop-filter: blur(4px);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.action-btn:hover {
-    background: rgba(214, 180, 56, 0.5);
-    transform: scale(1.1);
-    border-color: #ffd966;
-}
-
-.action-icon {
-    display: block;
-    stroke: #ffffff;
-    fill: none;
-    transition: stroke 0.2s;
-}
-
-.action-btn:hover .action-icon {
-    stroke: #000000;
-}
-
-/* Центрирование кнопки "фильтры" */
-.filters-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.filters-toggle-btn {
-    /* остальные стили уже есть, можно оставить */
-    display: inline-flex;  /* или inline-block, чтобы кнопка не растягивалась на всю ширину */
 }
