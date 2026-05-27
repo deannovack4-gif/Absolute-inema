@@ -132,13 +132,17 @@
                 <img id="currentMoviePoster" src="images/clockwork-orange-hq.jpg.jpg" alt="Постер фильма" class="poster-image">
             </div>
             <div class="movie-actions">
-                <button class="action-btn" id="prevMovieBtn">
-                    <img src="images/left.png" alt="Предыдущий" class="action-icon">
-                </button>
-                <button class="action-btn" id="nextMovieBtn">
-                    <img src="images/right.png" alt="Следующий" class="action-icon">
-                </button>
-            </div>
+    <button class="action-btn" id="prevMovieBtn" aria-label="Предыдущий фильм">
+        <svg class="action-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+    </button>
+    <button class="action-btn" id="nextMovieBtn" aria-label="Следующий фильм">
+        <svg class="action-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"></polyline>
+        </svg>
+    </button>
+</div>
         </div>
 
         <!-- Правая часть: блок обсуждений (уменьшенный) -->
