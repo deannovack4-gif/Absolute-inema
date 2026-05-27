@@ -890,24 +890,35 @@
         ] }
     ];
 
-    // --- Слайдер ---
+    // --- Слайдер фильмов ---
     let currentMovieIndex = 0;
     const currentMoviePoster = document.getElementById('currentMoviePoster');
     const prevBtn = document.getElementById('prevMovieBtn');
     const nextBtn = document.getElementById('nextMovieBtn');
     const discussionFeed = document.getElementById('discussionFeed');
-    const commentInput = document.getElementById('commentInput');
-    const submitComment = document.getElementById('submitComment');
 
+    // --- Хранение состояния кнопок для каждого фильма ---
+    let moviesState = [];
+
+    // Инициализация состояния для каждого фильма
+    for (let i = 0; i < moviesDatabase.length; i++) {
+        moviesState.push({});
+    }
+
+    // Ключ для синхронизации комментариев Бойцовского клуба с fightclub.html
     const FIGHTCLUB_COMMENTS_KEY = 'fightclubComments';
-    const FIGHTCLUB_INDEX = 2;
+    const FIGHTCLUB_INDEX = 2; // Индекс Бойцовского клуба в moviesDatabase
 
+    // Загрузка комментариев для Бойцовского клуба из общего хранилища
     function syncFightClubComments() {
         const savedComments = localStorage.getItem(FIGHTCLUB_COMMENTS_KEY);
         if (savedComments) {
             const parsed = JSON.parse(savedComments);
+            // Сохраняем только пользовательские комментарии (не системные)
+            const userComments = parsed.filter(c => c.userId !== 'system' || !moviesDatabase[FIGHTCLUB_INDEX].comments.find(mc => mc.text === c.text));
+            // Добавляем к существующим, если их ещё нет
             const existingTexts = new Set(moviesDatabase[FIGHTCLUB_INDEX].comments.map(c => c.text));
-            parsed.forEach(c => {
+            userComments.forEach(c => {
                 if (!existingTexts.has(c.text)) {
                     moviesDatabase[FIGHTCLUB_INDEX].comments.push({ author: c.author, text: c.text });
                     existingTexts.add(c.text);
@@ -916,69 +927,119 @@
         }
     }
 
+    // Сохранение комментариев Бойцовского клуба в общее хранилище
     function saveFightClubComments() {
         const comments = moviesDatabase[FIGHTCLUB_INDEX].comments;
+        // Храним максимум 50 комментариев
         const toSave = comments.length > 50 ? comments.slice(-50) : comments;
         localStorage.setItem(FIGHTCLUB_COMMENTS_KEY, JSON.stringify(toSave.map(c => ({
-            author: c.author, text: c.text, userId: c.userId || 'system', date: c.date || new Date().toISOString()
+            author: c.author,
+            text: c.text,
+            userId: c.userId || 'system',
+            date: c.date || new Date().toISOString()
         }))));
     }
 
+    // Синхронизируем при загрузке
     syncFightClubComments();
 
+    // Функция обновления постера и комментариев
     function updateMovieAndComments(index) {
-        if (index === FIGHTCLUB_INDEX) syncFightClubComments();
+        // Если переключаемся на Бойцовский клуб, синхронизируем комментарии
+        if (index === FIGHTCLUB_INDEX) {
+            syncFightClubComments();
+        }
+
+        // Обновляем постер
         currentMoviePoster.src = moviesDatabase[index].poster;
+        
+        // Очищаем и обновляем комментарии
         discussionFeed.innerHTML = '';
-        moviesDatabase[index].comments.forEach(comment => {
+        
+        const comments = moviesDatabase[index].comments;
+        comments.forEach(comment => {
             const commentDiv = document.createElement('div');
             commentDiv.classList.add('comment');
+            
             const authorSpan = document.createElement('span');
             authorSpan.classList.add('comment-author');
             authorSpan.textContent = comment.author + ':';
+            
             const textP = document.createElement('p');
             textP.classList.add('comment-text');
             textP.textContent = comment.text;
+            
             commentDiv.appendChild(authorSpan);
             commentDiv.appendChild(textP);
             discussionFeed.appendChild(commentDiv);
         });
+        
+        // Прокручиваем комментарии вверх
         discussionFeed.scrollTop = 0;
     }
 
+    // Обработчики кнопок слайдера
     prevBtn.addEventListener('click', () => {
         currentMovieIndex = (currentMovieIndex - 1 + moviesDatabase.length) % moviesDatabase.length;
         updateMovieAndComments(currentMovieIndex);
     });
+
     nextBtn.addEventListener('click', () => {
         currentMovieIndex = (currentMovieIndex + 1) % moviesDatabase.length;
         updateMovieAndComments(currentMovieIndex);
     });
 
+    // --- Работа с добавлением новых комментариев ---
+    const commentInput = document.getElementById('commentInput');
+    const submitComment = document.getElementById('submitComment');
+
     function addNewComment(author, text) {
-        moviesDatabase[currentMovieIndex].comments.push({ author, text });
-        if (currentMovieIndex === FIGHTCLUB_INDEX) saveFightClubComments();
+        // Добавляем комментарий в текущий фильм
+        moviesDatabase[currentMovieIndex].comments.push({
+            author: author,
+            text: text
+        });
+
+        // Если это Бойцовский клуб, сохраняем в общее хранилище
+        if (currentMovieIndex === FIGHTCLUB_INDEX) {
+            saveFightClubComments();
+        }
+
+        // Обновляем отображение комментариев
         updateMovieAndComments(currentMovieIndex);
+
+        // Прокручиваем вниз к новому комментарию
         discussionFeed.scrollTop = discussionFeed.scrollHeight;
     }
 
     submitComment.addEventListener('click', () => {
         const message = commentInput.value.trim();
         if (message) {
-            addNewComment('Гость' + Math.floor(Math.random() * 1000), message);
+            addNewComment('Гость' + (Math.floor(Math.random() * 1000)), message);
             commentInput.value = '';
         }
     });
-    commentInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') submitComment.click(); });
 
+    // Разрешаем отправку по Enter
+    commentInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            submitComment.click();
+        }
+    });
+
+    // --- Синхронизация с постерами в разделе "популярно сейчас" ---
     function buttonClick(buttonNumber) {
         const index = buttonNumber - 1;
         if (index >= 0 && index < moviesDatabase.length) {
             currentMovieIndex = index;
             updateMovieAndComments(currentMovieIndex);
-            showToast(`Переход к фильму ${moviesDatabase[index].poster.split('/').pop()}`);
+            showToast(`Переход к фильму ${getCurrentMovieTitle()}`);
+        } else {
+            showToast('Нажата кнопка ' + buttonNumber);
         }
     }
+
+    // --- Кнопки в блоке фильтров (без уведомления) ---
     function filteredButtonClick(buttonNumber) {
         const index = buttonNumber - 1;
         if (index >= 0 && index < moviesDatabase.length) {
@@ -987,248 +1048,610 @@
         }
     }
 
+    // Инициализация: показываем первый фильм (Заводной апельсин)
     updateMovieAndComments(0);
 
-    // ========== РАСКРЫТИЕ КАТАЛОГА ==========
+    // ========== ЛОГИКА РАСКРЫТИЯ БЛОКА КАТАЛОГА ==========
     const showAllBtn = document.getElementById('showAllBtn');
     const moviesGridOverlay = document.getElementById('moviesGridOverlay');
     const filteredMoviesGridEl = document.getElementById('filteredMoviesGrid');
+
     if (showAllBtn) {
         showAllBtn.addEventListener('click', () => {
+            // Раскрываем блок
             filteredMoviesGridEl.classList.add('expanded');
+            // Скрываем оверлей
             moviesGridOverlay.classList.add('hidden');
+            // Плавно прокручиваем к каталогу
             document.querySelector('.filtered-movies').scrollIntoView({ behavior: 'smooth' });
         });
     }
 
-    // ========== ФИЛЬТРЫ ==========
-    const filterToggleBtn = document.getElementById('filterToggleBtn');
-    const filterModal = document.getElementById('filterModal');
-    const closeFilterModal = document.getElementById('closeFilterModal');
-    const applyFiltersBtn = document.getElementById('applyFiltersBtn');
-    const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+    // ========== ЛОГИКА ФИЛЬТРОВ ==========
+const filterToggleBtn = document.getElementById('filterToggleBtn');
+const filterModal = document.getElementById('filterModal');
+const closeFilterModal = document.getElementById('closeFilterModal');
+const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+const resetFiltersBtn = document.getElementById('resetFiltersBtn');
+const filteredMoviesGrid = document.getElementById('filteredMoviesGrid');
 
-    if (filterToggleBtn) filterToggleBtn.addEventListener('click', () => filterModal.classList.add('show'));
-    if (closeFilterModal) closeFilterModal.addEventListener('click', () => filterModal.classList.remove('show'));
-    window.addEventListener('click', (e) => { if (e.target === filterModal) filterModal.classList.remove('show'); });
+// Открыть/закрыть окно фильтров
+if (filterToggleBtn) {
+    filterToggleBtn.addEventListener('click', () => {
+        filterModal.classList.add('show');
+    });
+}
 
-    function applyFilters() {
-        const genre = document.getElementById('filterGenre').value;
-        const yearRange = document.getElementById('filterYear').value;
-        const type = document.getElementById('filterType').value;
-        const duration = document.getElementById('filterDuration').value;
-        const allCards = document.querySelectorAll('.filtered-movie-card');
-        let visibleCount = 0;
-        allCards.forEach(card => {
-            let show = true;
-            if (genre !== 'all') {
-                let cardGenre = card.getAttribute('data-genre') || card.querySelector('img')?.getAttribute('data-genre');
-                if (!cardGenre || cardGenre !== genre) show = false;
-            }
-            if (show && yearRange !== 'all') {
-                let cardYear = parseInt(card.getAttribute('data-year')) || parseInt(card.querySelector('img')?.getAttribute('data-year'));
-                let minYear, maxYear;
-                if (yearRange === '1900-1979') { minYear = 1900; maxYear = 1979; }
-                else { [minYear, maxYear] = yearRange.split('-').map(Number); }
-                if (!cardYear || cardYear < minYear || cardYear > maxYear) show = false;
-            }
-            if (show && type !== 'all') {
-                let cardType = card.getAttribute('data-type') || card.querySelector('img')?.getAttribute('data-type');
-                if (!cardType || cardType !== type) show = false;
-            }
-            if (show && duration !== 'all') {
-                let cardDuration = parseInt(card.getAttribute('data-duration')) || parseInt(card.querySelector('img')?.getAttribute('data-duration'));
-                if (!cardDuration) show = false;
-                else if (duration === 'short' && cardDuration >= 90) show = false;
-                else if (duration === 'medium' && (cardDuration < 90 || cardDuration > 120)) show = false;
-                else if (duration === 'long' && cardDuration <= 120) show = false;
-            }
-            if (show) { card.style.display = ''; visibleCount++; }
-            else card.style.display = 'none';
-        });
-        showToast(visibleCount === 0 ? 'По выбранным фильтрам ничего не найдено' : `Найдено фильмов: ${visibleCount}`);
-        if (filteredMoviesGridEl && moviesGridOverlay) {
-            filteredMoviesGridEl.classList.remove('expanded');
-            moviesGridOverlay.classList.remove('hidden');
-        }
+if (closeFilterModal) {
+    closeFilterModal.addEventListener('click', () => {
+        filterModal.classList.remove('show');
+    });
+}
+
+// Закрытие при клике вне окна
+window.addEventListener('click', (e) => {
+    if (e.target === filterModal) {
         filterModal.classList.remove('show');
     }
+});
 
-    function resetFilters() {
-        document.getElementById('filterGenre').value = 'all';
-        document.getElementById('filterYear').value = 'all';
-        document.getElementById('filterType').value = 'all';
-        document.getElementById('filterDuration').value = 'all';
-        document.querySelectorAll('.filtered-movie-card').forEach(card => card.style.display = '');
-        if (filteredMoviesGridEl && moviesGridOverlay) {
-            filteredMoviesGridEl.classList.remove('expanded');
-            moviesGridOverlay.classList.remove('hidden');
+// Функция фильтрации с полной логикой
+function applyFilters() {
+    const genre = document.getElementById('filterGenre').value;
+    const yearRange = document.getElementById('filterYear').value;
+    const type = document.getElementById('filterType').value;
+    const duration = document.getElementById('filterDuration').value;
+    
+    const allCards = document.querySelectorAll('.filtered-movie-card');
+    let visibleCount = 0;
+    
+    allCards.forEach(card => {
+        let show = true;
+        
+        // Фильтр по жанру
+        if (genre !== 'all') {
+            let cardGenre = card.getAttribute('data-genre');
+            if (!cardGenre) {
+                cardGenre = card.querySelector('img')?.getAttribute('data-genre');
+            }
+            if (!cardGenre || cardGenre !== genre) {
+                show = false;
+            }
         }
-        showToast('Фильтры сброшены');
-        filterModal.classList.remove('show');
-    }
-
-    if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', applyFilters);
-    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetFilters);
-
-    // ========== ПОИСК (исправленный) ==========
-    const searchModal = document.getElementById('searchModal');
-    const searchNavBtns = document.querySelectorAll('.search-nav-btn');
-    const closeSearchModal = document.querySelector('.close-search-modal');
-    const searchInputField = document.getElementById('searchInput');
-    const searchButtonEl = document.getElementById('searchButton');
-    const suggestionsListEl = document.getElementById('suggestionsList');
-
-    function getCatalogMovies() {
-        const movieCards = document.querySelectorAll('.filtered-movie-card');
-        const movies = [];
-        movieCards.forEach((card, index) => {
-            const img = card.querySelector('.filtered-movie-poster');
-            const titleEl = card.querySelector('.filtered-movie-title');
-            const yearEl = card.querySelector('.filtered-movie-year');
-            if (img && titleEl) {
-                movies.push({
-                    id: index,
-                    title: titleEl.textContent.trim(),
-                    year: yearEl ? yearEl.textContent.trim() : '',
-                    poster: img.src,
-                    element: card
-                });
+        
+        // Фильтр по году
+        if (show && yearRange !== 'all') {
+            let cardYear = parseInt(card.getAttribute('data-year'));
+            if (!cardYear) {
+                cardYear = parseInt(card.querySelector('img')?.getAttribute('data-year'));
             }
-        });
-        return movies;
-    }
-
-    const popularMoviesList = [
-        { title: 'Бойцовский клуб', year: 1999, poster: 'images/fight-club.jpg', url: 'fightclub.html' },
-        { title: 'Заводной апельсин', year: 1971, poster: 'images/clockwork-orange-hq.jpg.jpg', url: 'index.html' },
-        { title: 'Криминальное чтиво', year: 1994, poster: 'images/pulp-fiction-hq.jpg.jpg', url: 'index.html' },
-        { title: 'Американский психопат', year: 2000, poster: 'images/american-psycho-hq.jpg.jpg', url: 'index.html' },
-        { title: 'Шоу Трумана', year: 1998, poster: 'images/truman-show-hq.jpg.jpg', url: 'index.html' }
-    ];
-
-    function openSearchModal() {
-        if (!searchModal) return;
-        searchModal.classList.add('show');
-        searchInputField.focus();
-        renderSuggestions(popularMoviesList.slice(0, 5));
-    }
-
-    function closeSearchModalFunc() {
-        if (!searchModal) return;
-        searchModal.classList.remove('show');
-        searchInputField.value = '';
-    }
-
-    function renderSuggestions(movies) {
-        if (!suggestionsListEl) return;
-        suggestionsListEl.innerHTML = '';
-        movies.forEach(movie => {
-            const suggestionItem = document.createElement('div');
-            suggestionItem.className = 'suggestion-item';
-            suggestionItem.innerHTML = `
-                <img src="${movie.poster}" alt="${movie.title}" class="suggestion-poster">
-                <div class="suggestion-info">
-                    <div class="suggestion-title">${movie.title}</div>
-                    <div class="suggestion-year">${movie.year}</div>
-                </div>
-            `;
-            const img = suggestionItem.querySelector('.suggestion-poster');
-            img.onerror = function() { this.src = 'images/placeholder.png'; this.onerror = null; };
-            suggestionItem.addEventListener('click', () => {
-                if (movie.url && movie.url !== 'index.html') {
-                    window.location.href = movie.url;
-                } else if (movie.element) {
-                    closeSearchModalFunc();
-                    if (filteredMoviesGridEl && moviesGridOverlay) {
-                        filteredMoviesGridEl.classList.add('expanded');
-                        moviesGridOverlay.classList.add('hidden');
-                    }
-                    setTimeout(() => {
-                        movie.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        movie.element.style.boxShadow = '0 0 20px #D6B538';
-                        setTimeout(() => movie.element.style.boxShadow = '', 2000);
-                    }, 300);
-                } else {
-                    closeSearchModalFunc();
-                }
-            });
-            suggestionsListEl.appendChild(suggestionItem);
-        });
-    }
-
-    function performSearch() {
-        const query = searchInputField.value.trim().toLowerCase();
-        if (!query) return;
-        const catalogMovies = getCatalogMovies();
-        const foundMovie = catalogMovies.find(m => m.title.toLowerCase() === query || m.title.toLowerCase().includes(query));
-        if (foundMovie) {
-            closeSearchModalFunc();
-            if (filteredMoviesGridEl && moviesGridOverlay) {
-                filteredMoviesGridEl.classList.add('expanded');
-                moviesGridOverlay.classList.add('hidden');
-            }
-            setTimeout(() => {
-                foundMovie.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                foundMovie.element.style.boxShadow = '0 0 20px #D6B538';
-                setTimeout(() => foundMovie.element.style.boxShadow = '', 2000);
-            }, 300);
-        } else {
-            const foundPopular = popularMoviesList.find(m => m.title.toLowerCase().includes(query));
-            if (foundPopular) {
-                if (foundPopular.url === 'fightclub.html') window.location.href = foundPopular.url;
-                else {
-                    closeSearchModalFunc();
-                    showToast(`Фильм "${foundPopular.title}" будет доступен в будущем обновлении! 🎬`);
-                }
+            let minYear, maxYear;
+            if (yearRange === '1900-1979') {
+                minYear = 1900;
+                maxYear = 1979;
             } else {
-                renderSuggestions(popularMoviesList.slice(0, 5));
+                [minYear, maxYear] = yearRange.split('-').map(Number);
+            }
+            if (!cardYear || cardYear < minYear || cardYear > maxYear) {
+                show = false;
+            }
+        }
+        
+        // Фильтр по типу
+        if (show && type !== 'all') {
+            let cardType = card.getAttribute('data-type');
+            if (!cardType) {
+                cardType = card.querySelector('img')?.getAttribute('data-type');
+            }
+            if (!cardType || cardType !== type) {
+                show = false;
+            }
+        }
+        
+        // Фильтр по длительности
+        if (show && duration !== 'all') {
+            let cardDuration = parseInt(card.getAttribute('data-duration'));
+            if (!cardDuration) {
+                cardDuration = parseInt(card.querySelector('img')?.getAttribute('data-duration'));
+            }
+            if (!cardDuration) {
+                show = false;
+            } else {
+                if (duration === 'short' && cardDuration >= 90) show = false;
+                if (duration === 'medium' && (cardDuration < 90 || cardDuration > 120)) show = false;
+                if (duration === 'long' && cardDuration <= 120) show = false;
+            }
+        }
+        
+        // Применяем видимость
+        if (show) {
+            card.style.display = '';
+            visibleCount++;
+        } else {
+            card.style.display = 'none';
+        }
+    });
+    
+    // Показываем сообщение
+    if (visibleCount === 0) {
+        showToast('По выбранным фильтрам ничего не найдено');
+    } else {
+        showToast(`Найдено фильмов: ${visibleCount}`);
+    }
+
+    // Восстанавливаем оверлей (сворачиваем обратно)
+    if (filteredMoviesGridEl && moviesGridOverlay) {
+        filteredMoviesGridEl.classList.remove('expanded');
+        moviesGridOverlay.classList.remove('hidden');
+    }
+
+    filterModal.classList.remove('show');
+}
+
+// Сброс фильтров
+function resetFilters() {
+    document.getElementById('filterGenre').value = 'all';
+    document.getElementById('filterYear').value = 'all';
+    document.getElementById('filterType').value = 'all';
+    document.getElementById('filterDuration').value = 'all';
+
+    // Показываем все карточки
+    const allCards = document.querySelectorAll('.filtered-movie-card');
+    allCards.forEach(card => {
+        card.style.display = '';
+    });
+
+    // Восстанавливаем оверлей
+    if (filteredMoviesGridEl && moviesGridOverlay) {
+        filteredMoviesGridEl.classList.remove('expanded');
+        moviesGridOverlay.classList.remove('hidden');
+    }
+
+    showToast('Фильтры сброшены');
+    filterModal.classList.remove('show');
+}
+
+if (applyFiltersBtn) {
+    applyFiltersBtn.addEventListener('click', applyFilters);
+}
+
+if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener('click', resetFilters);
+}
+
+// --- Search Functionality ---
+const searchModal = document.getElementById('searchModal');
+const searchNavBtns = document.querySelectorAll('.search-nav-btn');
+const closeSearchModal = document.querySelector('.close-search-modal');
+const searchInput = document.getElementById('searchInput');
+const searchButton = document.getElementById('searchButton');
+const suggestionsList = document.getElementById('suggestionsList');
+
+// Собираем все фильмы из каталога
+function getCatalogMovies() {
+    const movieCards = document.querySelectorAll('.filtered-movie-card');
+    const movies = [];
+    
+    movieCards.forEach((card, index) => {
+        const img = card.querySelector('.filtered-movie-poster');
+        const titleEl = card.querySelector('.filtered-movie-title');
+        const yearEl = card.querySelector('.filtered-movie-year');
+        
+        if (img && titleEl) {
+            movies.push({
+                id: index,
+                title: titleEl.textContent.trim(),
+                year: yearEl ? yearEl.textContent.trim() : '',
+                poster: img.src,
+                alt: img.alt || titleEl.textContent,
+                element: card
+            });
+        }
+    });
+    
+    return movies;
+}
+
+// Список популярных фильмов для отображения в предложениях
+const popularMovies = [
+    { title: 'Бойцовский клуб', year: 1999, poster: 'images/fight-club.jpg', url: 'fightclub.html' },
+    { title: 'Заводной апельсин', year: 1971, poster: 'images/clockwork-orange-hq.jpg.jpg', url: 'index.html' },
+    { title: 'Криминальное чтиво', year: 1994, poster: 'images/pulp-fiction-hq.jpg.jpg', url: 'index.html' },
+    { title: 'Американский психопат', year: 2000, poster: 'images/american-psycho-hq.jpg.jpg', url: 'index.html' },
+    { title: 'Шоу Трумана', year: 1998, poster: 'images/truman-show-hq.jpg.jpg', url: 'index.html' }
+];
+
+// Функция для открытия модального окна
+function openSearchModal() {
+    searchModal.classList.add('show');
+    searchInput.focus();
+    renderSuggestions(popularMovies.slice(0, 5)); // Показываем первые 5 популярных фильмов
+}
+
+// Функция для закрытия модального окна
+function closeSearchModalFunc() {
+    searchModal.classList.remove('show');
+    searchInput.value = '';
+}
+
+// Функция для рендеринга предложений
+function renderSuggestions(movies) {
+    suggestionsList.innerHTML = '';
+    movies.forEach(movie => {
+        const suggestionItem = document.createElement('div');
+        suggestionItem.className = 'suggestion-item';
+        suggestionItem.innerHTML = `
+            <img src="${movie.poster}" alt="${movie.title}" class="suggestion-poster">
+            <div class="suggestion-info">
+                <div class="suggestion-title">${movie.title}</div>
+                <div class="suggestion-year">${movie.year}</div>
+            </div>
+        `;
+        suggestionItem.addEventListener('click', () => {
+            if (movie.url && movie.url !== 'index.html') {
+                // Переход на другую страницу
+                window.location.href = movie.url;
+            } else if (movie.element) {
+                // Фильм из каталога - прокручиваем к нему
+                closeSearchModalFunc();
+                
+                // Раскрываем каталог если он свернут
+                const filteredMoviesGridEl = document.getElementById('filteredMoviesGrid');
+                const moviesGridOverlay = document.getElementById('moviesGridOverlay');
+                if (filteredMoviesGridEl && moviesGridOverlay) {
+                    filteredMoviesGridEl.classList.add('expanded');
+                    moviesGridOverlay.classList.add('hidden');
+                }
+                
+                // Прокручиваем к элементу
+                setTimeout(() => {
+                    movie.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    // Подсвечиваем элемент
+                    movie.element.style.boxShadow = '0 0 20px #D6B538';
+                    movie.element.style.transition = 'box-shadow 0.3s ease';
+                    setTimeout(() => {
+                        movie.element.style.boxShadow = '';
+                    }, 2000);
+                }, 300);
+            } else {
+                // Просто закрываем модалку
+                closeSearchModalFunc();
+            }
+        });
+        suggestionsList.appendChild(suggestionItem);
+    });
+}
+
+// Функция для выполнения поиска
+function performSearch() {
+    const query = searchInput.value.trim().toLowerCase();
+    if (!query) return;
+
+    const catalogMovies = getCatalogMovies();
+    
+    // Ищем фильм по названию в каталоге
+    const foundMovie = catalogMovies.find(movie =>
+        movie.title.toLowerCase() === query ||
+        movie.title.toLowerCase().includes(query)
+    );
+
+    if (foundMovie) {
+        closeSearchModalFunc();
+        
+        // Раскрываем каталог если он свернут
+        const filteredMoviesGridEl = document.getElementById('filteredMoviesGrid');
+        const moviesGridOverlay = document.getElementById('moviesGridOverlay');
+        if (filteredMoviesGridEl && moviesGridOverlay) {
+            filteredMoviesGridEl.classList.add('expanded');
+            moviesGridOverlay.classList.add('hidden');
+        }
+        
+        // Прокручиваем к найденному фильму
+        setTimeout(() => {
+            foundMovie.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Подсвечиваем найденный элемент
+            foundMovie.element.style.boxShadow = '0 0 20px #D6B538';
+            foundMovie.element.style.transition = 'box-shadow 0.3s ease';
+            setTimeout(() => {
+                foundMovie.element.style.boxShadow = '';
+            }, 2000);
+        }, 300);
+    } else {
+        // Если фильм не найден в каталоге, ищем в популярных
+        const foundPopular = popularMovies.find(movie =>
+            movie.title.toLowerCase().includes(query)
+        );
+        
+        if (foundPopular) {
+            if (foundPopular.url === 'fightclub.html') {
+                window.location.href = foundPopular.url;
+            } else {
+                closeSearchModalFunc();
+                if (typeof showToast === 'function') {
+                    showToast(`Фильм "${foundPopular.title}" будет доступен в будущем обновлении! 🎬`);
+                } else {
+                    alert(`Фильм "${foundPopular.title}" будет доступен в будущем обновлении!`);
+                }
+            }
+        } else {
+            renderSuggestions(popularMovies.slice(0, 5));
+            if (typeof showToast === 'function') {
                 showToast('Фильм не найден. Попробуйте другой запрос.');
             }
         }
     }
+}
 
-    function filterSuggestions() {
-        const query = searchInputField.value.trim().toLowerCase();
-        if (query === '') { renderSuggestions(popularMoviesList.slice(0, 5)); return; }
-        const catalogMovies = getCatalogMovies();
-        const filteredCatalog = catalogMovies.filter(m => m.title.toLowerCase().includes(query));
-        if (filteredCatalog.length > 0) renderSuggestions(filteredCatalog.slice(0, 8));
-        else {
-            const filteredPopular = popularMoviesList.filter(m => m.title.toLowerCase().includes(query));
-            if (filteredPopular.length > 0) renderSuggestions(filteredPopular.slice(0, 8));
-            else suggestionsListEl.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Ничего не найдено</div>';
-        }
+// Функция для фильтрации предложений при вводе
+function filterSuggestions() {
+    const query = searchInput.value.trim().toLowerCase();
+    if (query === '') {
+        renderSuggestions(popularMovies.slice(0, 5));
+        return;
     }
 
-    searchNavBtns.forEach(btn => {
-        btn.removeEventListener('click', openSearchModal);
-        btn.addEventListener('click', openSearchModal);
+    const catalogMovies = getCatalogMovies();
+    
+    // Ищем в каталоге
+    const filteredCatalog = catalogMovies.filter(movie =>
+        movie.title.toLowerCase().includes(query)
+    );
+
+    if (filteredCatalog.length > 0) {
+        // Если нашли в каталоге, показываем результаты
+        renderSuggestions(filteredCatalog.slice(0, 8));
+    } else {
+        // Иначе ищем в популярных
+        const filteredPopular = popularMovies.filter(movie =>
+            movie.title.toLowerCase().includes(query)
+        );
+        
+        if (filteredPopular.length > 0) {
+            renderSuggestions(filteredPopular.slice(0, 8));
+        } else {
+            suggestionsList.innerHTML = '<div style="text-align: center; color: #888; padding: 20px;">Ничего не найдено</div>';
+        }
+    }
+}
+
+// Обработчики событий
+searchNavBtns.forEach(btn => {
+    btn.addEventListener('click', openSearchModal);
+});
+
+closeSearchModal.addEventListener('click', closeSearchModalFunc);
+
+// Закрытие при клике вне окна
+window.addEventListener('click', (e) => {
+    if (e.target === searchModal) {
+        closeSearchModalFunc();
+    }
+});
+
+// Обработка поиска
+searchButton.addEventListener('click', performSearch);
+searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        performSearch();
+    }
+});
+searchInput.addEventListener('input', filterSuggestions);
+
+// --- Обработка хешей URL для перехода из других страниц ---
+function handleHashScroll() {
+    const hash = window.location.hash;
+    
+    if (hash.startsWith('#film-')) {
+        // Раскрываем каталог
+        const filteredMoviesGridEl = document.getElementById('filteredMoviesGrid');
+        const moviesGridOverlay = document.getElementById('moviesGridOverlay');
+        if (filteredMoviesGridEl && moviesGridOverlay) {
+            filteredMoviesGridEl.classList.add('expanded');
+            moviesGridOverlay.classList.add('hidden');
+        }
+        
+        // Прокручиваем к секции фильтров
+        setTimeout(() => {
+            document.querySelector('#filters').scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    } else if (hash === '#catalog' || hash === '#filters') {
+        // Раскрываем каталог
+        const filteredMoviesGridEl = document.getElementById('filteredMoviesGrid');
+        const moviesGridOverlay = document.getElementById('moviesGridOverlay');
+        if (filteredMoviesGridEl && moviesGridOverlay) {
+            filteredMoviesGridEl.classList.add('expanded');
+            moviesGridOverlay.classList.add('hidden');
+        }
+        
+        // Прокручиваем к секции фильтров
+        setTimeout(() => {
+            document.querySelector('#filters').scrollIntoView({ behavior: 'smooth' });
+        }, 300);
+    }
+}
+
+// Обработаем хеш при загрузке страницы
+window.addEventListener('load', () => {
+    if (window.location.hash) {
+        handleHashScroll();
+    }
+});
+
+// Обработаем изменение хеша
+window.addEventListener('hashchange', () => {
+    handleHashScroll();
+});
+
+// Обработчик кнопки "главная" для перезагрузки страницы
+const navHomeBtn = document.getElementById('navHome');
+if (navHomeBtn) {
+    navHomeBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        window.location.href = 'index.html';
     });
-    if (closeSearchModal) closeSearchModal.addEventListener('click', closeSearchModalFunc);
-    window.addEventListener('click', (e) => { if (e.target === searchModal) closeSearchModalFunc(); });
-    if (searchButtonEl) searchButtonEl.addEventListener('click', performSearch);
-    if (searchInputField) {
-        searchInputField.addEventListener('keypress', (e) => { if (e.key === 'Enter') performSearch(); });
-        searchInputField.addEventListener('input', filterSuggestions);
+}
+
+</script>
+
+<style>
+    /* Стили для тостов */
+    .toast-container {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2000;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none;
     }
 
-    // ========== ХЕШИ ==========
-    function handleHashScroll() {
-        const hash = window.location.hash;
-        if (hash === '#catalog' || hash === '#filters' || hash.startsWith('#film-')) {
-            if (filteredMoviesGridEl && moviesGridOverlay) {
-                filteredMoviesGridEl.classList.add('expanded');
-                moviesGridOverlay.classList.add('hidden');
-            }
-            setTimeout(() => document.querySelector('#filters').scrollIntoView({ behavior: 'smooth' }), 300);
+    .toast {
+        background: rgba(0, 0, 0, 0.9);
+        color: #D6B538;
+        padding: 15px 25px;
+        border-radius: 8px;
+        border-left: 4px solid #D6B538;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        font-family: 'M PLUS 1', sans-serif;
+        font-size: 14px;
+        max-width: 300px;
+        word-wrap: break-word;
+        opacity: 0;
+        transform: translateX(400px);
+        transition: all 0.3s ease;
+        pointer-events: auto;
+        cursor: pointer;
+    }
+
+    .toast.show {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .toast:hover {
+        background: rgba(20, 20, 20, 0.95);
+        box-shadow: 0 6px 16px rgba(214, 180, 56, 0.2);
+    }
+
+    /* ========== Стили для оверлея каталога фильмов ========== */
+    .filtered-movies {
+        position: relative;
+    }
+
+    .filtered-movies-grid {
+        position: relative;
+        max-height: 600px; /* Ограничиваем высоту (~2 ряда) */
+        overflow: hidden;
+        transition: max-height 0.5s ease;
+    }
+
+    .filtered-movies-grid.expanded {
+        max-height: none; /* Убираем ограничение при раскрытии */
+    }
+
+    .movies-grid-overlay {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 300px;
+        pointer-events: none;
+        z-index: 10;
+        transition: opacity 0.3s ease;
+    }
+
+    .movies-grid-overlay.hidden {
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    .overlay-gradient {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 100%;
+        background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.7) 40%, rgba(0, 0, 0, 0.95) 100%);
+    }
+
+    .show-all-btn {
+        position: absolute;
+        bottom: 40px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(214, 180, 56, 0.15);
+        border: 2px solid #D6B538;
+        color: #D6B538;
+        padding: 14px 32px;
+        border-radius: 30px;
+        cursor: pointer;
+        font-family: 'M PLUS 1', sans-serif;
+        font-size: 16px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        transition: all 0.3s ease;
+        pointer-events: auto;
+        backdrop-filter: blur(8px);
+        z-index: 11;
+    }
+
+    .show-all-btn:hover {
+        background: rgba(214, 180, 56, 0.3);
+        box-shadow: 0 4px 20px rgba(214, 180, 56, 0.3);
+        transform: translateX(-50%) translateY(-2px);
+    }
+
+    .show-all-btn:active {
+        transform: translateX(-50%) translateY(0);
+    }
+
+    .show-all-text {
+        text-transform: lowercase;
+        letter-spacing: 0.5px;
+    }
+
+    .show-all-arrow {
+        width: 20px;
+        height: 20px;
+        transition: transform 0.3s ease;
+    }
+
+    .show-all-btn:hover .show-all-arrow {
+        transform: rotate(180deg);
+    }
+
+    @media (max-width: 480px) {
+        .filtered-movies-grid {
+            max-height: 400px;
+        }
+
+        .movies-grid-overlay {
+            height: 200px;
+        }
+
+        .show-all-btn {
+            padding: 12px 24px;
+            font-size: 14px;
         }
     }
-    window.addEventListener('load', () => { if (window.location.hash) handleHashScroll(); });
-    window.addEventListener('hashchange', handleHashScroll);
 
-    const navHomeBtn = document.getElementById('navHome');
-    if (navHomeBtn) navHomeBtn.addEventListener('click', (e) => { e.preventDefault(); window.location.href = 'index.html'; });
-</script>
+    @media (max-width: 480px) {
+        .toast-container {
+            bottom: 10px;
+            right: 10px;
+            left: 10px;
+        }
+
+        .toast {
+            max-width: none;
+            margin: 0;
+        }
+    }
+</style>
+
 </body>
 </html>
