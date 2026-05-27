@@ -1831,3 +1831,264 @@ body {
         padding: 6px 12px;
     }
 }
+
+/* ============================================
+   СТРАНИЦА ФИЛЬМА (fightclub.html)
+   ============================================ */
+
+/* Основная информация о фильме */
+.film-info {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 27px;
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 13px;
+    flex-wrap: wrap;
+}
+
+.left-side, .right-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.film-poster {
+    width: 367px;
+    height: auto;
+    aspect-ratio: 367/520;
+    object-fit: cover;
+}
+
+.film-text {
+    max-width: 450px;
+}
+
+.film-text p {
+    line-height: 1.6;
+    font-size: 14px;
+    margin-bottom: 0.8em;
+}
+
+.film-buttons {
+    display: flex;
+    gap: 5px;
+    width: 450px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.film-button {
+    width: 86px;
+    height: 86px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.film-button img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+}
+
+.tooltip {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    white-space: normal;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s;
+    width: 300px;
+    text-align: center;
+    z-index: 10;
+}
+
+.film-button:hover .tooltip {
+    opacity: 1;
+}
+
+/* Видео блок */
+.viewing-section {
+    padding: 10px 0 60px;
+    background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
+}
+
+.viewing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 25px;
+}
+
+.viewing-title-top {
+    font-family: 'Rimma', sans-serif;
+    font-size: 36px;
+    color: rgb(214, 180, 56);
+    line-height: 1;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.video-wrapper {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    padding-bottom: 56.25%;
+    height: 0;
+}
+
+.video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* Рейтинг звёздами */
+.rating-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+}
+
+.stars-container {
+    display: flex;
+    gap: 10px;
+}
+
+.star-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.star-icon {
+    width: 32px;
+    height: 32px;
+    stroke: #D6B538;
+    fill: transparent;
+    transition: all 0.2s;
+}
+
+.star-btn:hover .star-icon,
+.star-btn.active .star-icon {
+    fill: #D6B538;
+    transform: scale(1.15);
+}
+
+.rating-value {
+    font-family: 'Rimma', sans-serif;
+    font-size: 18px;
+    color: #D6B538;
+}
+
+/* Комментарии на странице фильма */
+.comments-section {
+    background: rgba(20, 20, 20, 0.9);
+    border-radius: 16px;
+    padding: 25px;
+    border: 1px solid rgba(214, 180, 56, 0.3);
+    margin-top: 20px;
+    width: 90%;
+    max-width: 1600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.comments-feed {
+    max-height: 350px;
+    overflow-y: auto;
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.comments-section .comment.user-comment {
+    background: rgba(214, 181, 56, 0.15);
+    border-left: 3px solid #ffd966;
+    border-right: 3px solid #ffd966;
+}
+
+.comments-section .comment.user-comment::after {
+    content: 'Ваш комментарий';
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 10px;
+    color: #D6B538;
+}
+
+/* Адаптивность для страницы фильма */
+@media (max-width: 900px) {
+    .film-info {
+        flex-direction: column;
+        align-items: center;
+    }
+    .film-text {
+        max-width: 100%;
+    }
+    .film-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .film-poster {
+        width: 100%;
+        max-width: 300px;
+        height: auto;
+    }
+    .film-button {
+        width: 70px;
+        height: 70px;
+    }
+    .film-button img {
+        width: 50px;
+        height: 50px;
+    }
+    .viewing-title-top {
+        font-size: 24px;
+    }
+    .comments-section {
+        width: 100%;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .film-button {
+        width: 60px;
+        height: 60px;
+    }
+    .film-button img {
+        width: 45px;
+        height: 45px;
+    }
+    .star-icon {
+        width: 28px;
+        height: 28px;
+    }
+    .stars-container {
+        gap: 8px;
+    }
+    .comments-feed {
+        max-height: 300px;
+    }
+}
