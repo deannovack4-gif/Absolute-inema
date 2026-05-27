@@ -826,6 +826,10 @@
 }
     ];
 
+  // В самом начале скрипта, после объявления переменных, добавьте:
+console.log('Скрипт загружен');
+console.log('searchModal:', document.getElementById('searchModal'));
+console.log('searchNavBtns:', document.querySelectorAll('.search-nav-btn').length);
     // --- Слайдер фильмов ---
     let currentMovieIndex = 0;
     const currentMoviePoster = document.getElementById('currentMoviePoster');
@@ -1225,8 +1229,8 @@ function renderSuggestions(movies) {
         // Обработчик ошибки загрузки картинки
         const img = suggestionItem.querySelector('.suggestion-poster');
         img.onerror = function() {
-            this.src = 'images/placeholder.jpg'; // запасная картинка (можно создать пустую)
-            this.onerror = null; // чтобы не зациклить
+            this.src = 'images/placeholder.jpg'; // создайте любой заглушечный файл в папке images
+            this.onerror = null;
         };
         suggestionItem.addEventListener('click', () => {
             if (movie.url && movie.url !== 'index.html') {
