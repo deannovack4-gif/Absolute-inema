@@ -288,18 +288,15 @@ body {
     flex-wrap: wrap;
 }
 
-/* Улучшенные кнопки слайдера со стрелками */
+/* Кнопки слайдера (видимые, с фоном) */
 .action-btn {
     background: rgba(0, 0, 0, 0.7);
-    border: 2px solid #D6B538;
+    border: 1px solid #D6B538;
     border-radius: 50%;
     cursor: pointer;
     padding: 10px;
     transition: all 0.2s ease;
     backdrop-filter: blur(4px);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .action-btn:hover {
@@ -309,14 +306,11 @@ body {
 }
 
 .action-icon {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+    filter: brightness(0) invert(1);
     display: block;
-    stroke: #ffffff;
-    fill: none;
-    transition: stroke 0.2s;
-}
-
-.action-btn:hover .action-icon {
-    stroke: #000000;
 }
 
 /* Обсуждения */
@@ -423,220 +417,18 @@ body {
     background: #e6c45e;
 }
 
-/* ========== СТРАНИЦА ФИЛЬМА (fightclub.html) ========== */
-.film-info {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 27px;
-    max-width: 1000px;
-    margin: 0 auto;
-    padding: 13px;
-    flex-wrap: wrap;
-}
-
-.left-side, .right-side {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.film-poster {
-    width: 367px;
-    height: auto;
-    aspect-ratio: 367/520;
-    object-fit: cover;
-}
-
-.film-text {
-    max-width: 450px;
-}
-
-.film-text p {
-    line-height: 1.6;
-    font-size: 14px;
-    margin-bottom: 0.8em;
-}
-
-.film-buttons {
-    display: flex;
-    gap: 5px;
-    width: 450px;
-    flex-wrap: wrap;
-    justify-content: center;
-}
-
-.film-button {
-    width: 86px;
-    height: 86px;
-    border: none;
-    background: none;
-    cursor: pointer;
-    position: relative;
-}
-
-.film-button img {
-    width: 60px;
-    height: 60px;
-    object-fit: cover;
-}
-
-.tooltip {
-    position: absolute;
-    top: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.8);
-    color: #fff;
-    padding: 8px;
-    border-radius: 4px;
-    font-size: 12px;
-    white-space: normal;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s;
-    width: 300px;
-    text-align: center;
-    z-index: 10;
-}
-
-.film-button:hover .tooltip {
-    opacity: 1;
-}
-
-/* Видео блок */
-.viewing-section {
-    padding: 10px 0 60px;
-    background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
-}
-
-.viewing-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 25px;
-}
-
-.viewing-title-top {
-    font-family: 'Rimma', sans-serif;
-    font-size: 36px;
-    color: rgb(214, 180, 56);
-    line-height: 1;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-}
-
-.video-wrapper {
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-}
-
-.video-wrapper iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
-
-/* Рейтинг звёздами */
-.rating-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    padding: 20px 0;
-}
-
-.stars-container {
-    display: flex;
-    gap: 10px;
-}
-
-.star-btn {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-}
-
-.star-icon {
-    width: 32px;
-    height: 32px;
-    stroke: #D6B538;
-    fill: transparent;
-    transition: all 0.2s;
-}
-
-.star-btn:hover .star-icon,
-.star-btn.active .star-icon {
-    fill: #D6B538;
-    transform: scale(1.15);
-}
-
-.rating-value {
-    font-family: 'Rimma', sans-serif;
-    font-size: 18px;
-    color: #D6B538;
-}
-
-/* Комментарии на странице фильма */
-.comments-section {
-    background: rgba(20, 20, 20, 0.9);
-    border-radius: 16px;
-    padding: 25px;
-    border: 1px solid rgba(214, 180, 56, 0.3);
-    margin-top: 20px;
-    width: 90%;
-    max-width: 1600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.comments-feed {
-    max-height: 350px;
-    overflow-y: auto;
-    margin-bottom: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-.comments-section .comment.user-comment {
-    background: rgba(214, 181, 56, 0.15);
-    border-left: 3px solid #ffd966;
-    border-right: 3px solid #ffd966;
-}
-
-.comments-section .comment.user-comment::after {
-    content: 'Ваш комментарий';
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    font-size: 10px;
-    color: #D6B538;
-}
-
 /* ========== ФИЛЬТРЫ И КАТАЛОГ ========== */
 .filters-section {
     padding: 60px 0;
     background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
 }
 
-/* Центрирование кнопки "фильтры" */
+/* Центрирование кнопки фильтров */
 .filters-header {
     text-align: center;
     margin-bottom: 30px;
-    width: 100%;
-    display: flex;
-    justify-content: center;
 }
 
-/* Стиль кнопки фильтров */
 .filters-toggle-btn {
     background: #D6B538;
     border: none;
@@ -830,224 +622,6 @@ body {
     white-space: nowrap;
 }
 
-/* ========== НОВОСТИ ========== */
-.news-page {
-    background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
-}
-
-.news-hero {
-    padding: 40px 0;
-    text-align: center;
-    background: linear-gradient(135deg, rgba(214, 180, 56, 0.1) 0%, rgba(0, 0, 0, 0.9) 100%);
-}
-
-.news-page-title {
-    font-family: 'Rimma', sans-serif;
-    font-size: 48px;
-    color: #D6B538;
-    text-transform: uppercase;
-    letter-spacing: 4px;
-}
-
-.news-article {
-    background: rgba(20, 20, 20, 0.8);
-    border: 1px solid rgba(214, 180, 56, 0.3);
-    border-radius: 20px;
-    padding: 40px;
-    margin-bottom: 50px;
-    max-width: 1200px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.article-title {
-    font-family: 'Rimma', sans-serif;
-    font-size: 32px;
-    color: #fff;
-}
-
-.image-mosaic {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    grid-auto-rows: 80px;
-    gap: 12px;
-    margin: 30px 0;
-}
-
-.mosaic-item {
-    position: relative;
-    overflow: hidden;
-    border-radius: 10px;
-}
-
-.mosaic-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.mosaic-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0;
-    transition: opacity 0.3s;
-}
-
-.mosaic-item:hover .mosaic-overlay {
-    opacity: 1;
-}
-
-.mosaic-caption {
-    color: white;
-    padding: 10px;
-    text-align: center;
-}
-
-/* размеры плиток */
-.mosaic-item.large { grid-column: span 8; grid-row: span 4; }
-.mosaic-item.tall { grid-column: span 4; grid-row: span 4; }
-.mosaic-item.wide { grid-column: span 6; grid-row: span 2; }
-.mosaic-item.medium { grid-column: span 4; grid-row: span 2; }
-.mosaic-item.small { grid-column: span 3; grid-row: span 2; }
-
-.article-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 30px;
-}
-
-.tag {
-    padding: 6px 16px;
-    background: rgba(214, 180, 56, 0.15);
-    border: 1px solid rgba(214, 180, 56, 0.3);
-    border-radius: 20px;
-    color: #D6B538;
-    font-size: 13px;
-}
-
-/* ========== ПОДДЕРЖКА ========== */
-.support-hero {
-    padding: 80px 0;
-    background: linear-gradient(135deg, rgba(0,0,0,0.95), rgba(10,10,10,0.88));
-}
-
-.support-card, .donation-card {
-    background: rgba(20, 20, 20, 0.95);
-    border: 1px solid rgba(214, 180, 56, 0.2);
-    border-radius: 28px;
-    padding: 45px;
-    max-width: 900px;
-    margin: 0 auto;
-}
-
-.donation-amounts {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 12px;
-    margin-bottom: 28px;
-}
-
-.donation-btn {
-    padding: 14px;
-    border: 2px solid rgba(214, 180, 56, 0.3);
-    border-radius: 12px;
-    background: rgba(255, 255, 255, 0.04);
-    color: #ddd;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.donation-btn.active {
-    background: rgba(214, 180, 56, 0.25);
-    border-color: #d6b538;
-    color: #d6b538;
-}
-
-.donation-submit {
-    padding: 14px;
-    background: linear-gradient(135deg, #d6b538, #c9a528);
-    border: none;
-    border-radius: 12px;
-    color: #1a1a1a;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 8px;
-}
-
-/* ========== ПОИСКОВОЕ МОДАЛЬНОЕ ОКНО ========== */
-.search-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.95);
-    backdrop-filter: blur(8px);
-    z-index: 2000;
-    justify-content: center;
-    align-items: center;
-}
-
-.search-modal.show {
-    display: flex;
-}
-
-.search-modal-content {
-    background: #1a1a1a;
-    border-radius: 25px;
-    max-width: 600px;
-    width: 90%;
-    padding: 40px;
-    border: 1px solid #D6B538;
-}
-
-.search-input {
-    width: 100%;
-    padding: 15px 50px 15px 20px;
-    background: #2a2a2a;
-    border: 2px solid #444;
-    border-radius: 50px;
-    color: #fff;
-    font-size: 16px;
-}
-
-.search-button {
-    position: absolute;
-    right: 5px;
-    top: 50%;
-    transform: translateY(-50%);
-    background: none;
-    border: none;
-    cursor: pointer;
-}
-
-.suggestion-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px;
-    background: rgba(214, 180, 56, 0.1);
-    border-radius: 12px;
-    cursor: pointer;
-    margin-bottom: 10px;
-}
-
-.suggestion-poster {
-    width: 40px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 6px;
-}
-
 /* ========== ФУТЕР ========== */
 .footer {
     background: #1a1a1a;
@@ -1057,7 +631,6 @@ body {
     border-top: 1px solid rgba(214, 180, 56, 0.3);
 }
 
-/* Кнопка "наверх" без фона */
 .footer-top-btn {
     background: transparent;
     border: none;
@@ -1089,7 +662,208 @@ body {
     color: #aaa;
 }
 
-/* ========== АДАПТИВНОСТЬ ДЛЯ МОБИЛЬНЫХ ========== */
+/* ========== ПОИСКОВОЕ МОДАЛЬНОЕ ОКНО (как в вашем старом CSS) ========== */
+.search-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(8px);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.search-modal.show {
+    display: flex;
+}
+
+.search-modal-content {
+    background: #1a1a1a;
+    border-radius: 25px;
+    max-width: 600px;
+    width: 90%;
+    padding: 40px;
+    border: 1px solid #D6B538;
+}
+
+.search-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    border-bottom: 2px solid #D6B538;
+    padding-bottom: 15px;
+}
+
+.search-modal-header h3 {
+    font-family: 'Rimma', sans-serif;
+    font-size: 24px;
+    color: #D6B538;
+    margin: 0;
+}
+
+.close-search-modal {
+    background: none;
+    border: none;
+    color: #fff;
+    font-size: 32px;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.close-search-modal:hover {
+    color: #D6B538;
+}
+
+.search-input-wrapper {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.search-input {
+    width: 100%;
+    padding: 15px 50px 15px 20px;
+    background: #2a2a2a;
+    border: 2px solid #444;
+    border-radius: 50px;
+    color: #fff;
+    font-family: 'M PLUS 1', sans-serif;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.search-input:focus {
+    outline: none;
+    border-color: #D6B538;
+    background: #333;
+}
+
+.search-button {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 10px;
+    transition: transform 0.2s;
+}
+
+.search-button:hover {
+    transform: translateY(-50%) scale(1.1);
+}
+
+.search-icon {
+    width: 24px;
+    height: 24px;
+    stroke: #D6B538;
+    stroke-width: 2;
+    fill: none;
+}
+
+.suggestions-title {
+    font-family: 'Rimma', sans-serif;
+    font-size: 16px;
+    color: #888;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.suggestions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.suggestion-item {
+    background: rgba(214, 180, 56, 0.1);
+    border: 1px solid rgba(214, 180, 56, 0.3);
+    border-radius: 12px;
+    padding: 12px 20px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.suggestion-item:hover {
+    background: rgba(214, 180, 56, 0.2);
+    border-color: #D6B538;
+    transform: translateX(5px);
+}
+
+.suggestion-poster {
+    width: 40px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.suggestion-info {
+    flex: 1;
+}
+
+.suggestion-title {
+    font-weight: bold;
+    color: #D6B538;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.suggestion-year {
+    font-size: 12px;
+    color: #888;
+}
+
+/* ========== ТОСТЫ ========== */
+.toast-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 2000;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+}
+
+.toast {
+    background: rgba(0, 0, 0, 0.9);
+    color: #D6B538;
+    padding: 15px 25px;
+    border-radius: 8px;
+    border-left: 4px solid #D6B538;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    font-family: 'M PLUS 1', sans-serif;
+    font-size: 14px;
+    max-width: 300px;
+    word-wrap: break-word;
+    opacity: 0;
+    transform: translateX(400px);
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.toast.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.toast:hover {
+    background: rgba(20, 20, 20, 0.95);
+    box-shadow: 0 6px 16px rgba(214, 180, 56, 0.2);
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
 @media (max-width: 900px) {
     .showcase-container {
         grid-template-columns: 1fr;
@@ -1097,21 +871,6 @@ body {
     }
     .movie-poster-large {
         margin: 0 auto;
-    }
-    .film-info {
-        flex-direction: column;
-        align-items: center;
-    }
-    .film-text {
-        max-width: 100%;
-    }
-    .film-buttons {
-        width: 100%;
-        justify-content: center;
-    }
-    .image-mosaic {
-        grid-template-columns: repeat(6, 1fr);
-        grid-auto-rows: 60px;
     }
 }
 
@@ -1134,9 +893,6 @@ body {
     .filtered-movies-grid {
         grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     }
-    .support-card, .donation-card {
-        padding: 32px 22px;
-    }
 }
 
 @media (max-width: 480px) {
@@ -1154,28 +910,11 @@ body {
     .movie-poster-large {
         max-width: 250px;
     }
-    .comments-section .comment-form,
     .comment-form {
         flex-direction: column;
     }
     .comment-submit {
         width: 100%;
-    }
-    .film-poster {
-        width: 100%;
-        max-width: 300px;
-        height: auto;
-    }
-    .film-button {
-        width: 70px;
-        height: 70px;
-    }
-    .film-button img {
-        width: 50px;
-        height: 50px;
-    }
-    .viewing-title-top {
-        font-size: 24px;
     }
     .filtered-movies-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -1186,33 +925,6 @@ body {
     }
     .apply-filters-btn, .reset-filters-btn {
         width: 100%;
-    }
-    .donation-amounts {
-        grid-template-columns: 1fr;
-    }
-    .image-mosaic {
-        grid-template-columns: 1fr;
-        grid-auto-rows: 200px;
-    }
-    .mosaic-item.large,
-    .mosaic-item.tall,
-    .mosaic-item.wide,
-    .mosaic-item.medium,
-    .mosaic-item.small {
-        grid-column: span 1;
-        grid-row: span 1;
-    }
-    .news-page-title {
-        font-size: 28px;
-    }
-    .article-title {
-        font-size: 22px;
-    }
-    .search-modal-content {
-        padding: 25px;
-    }
-    .footer-top-image {
-        width: 150px;
     }
     .filtered-movies-grid {
         max-height: 400px;
@@ -1225,31 +937,28 @@ body {
         font-size: 14px;
         white-space: nowrap;
     }
-    .nav-btn, .control-btn, .comment-submit, .donation-btn, .star-btn {
-        min-height: 44px;
+    .footer-top-image {
+        width: 150px;
     }
-    .filters-toggle-btn {
-        padding: 10px 24px;
-        font-size: 16px;
+    .search-modal-content {
+        padding: 25px;
+    }
+    .suggestion-poster {
+        width: 32px;
+        height: 48px;
+    }
+    .toast-container {
+        bottom: 10px;
+        right: 10px;
+        left: 10px;
+    }
+    .toast {
+        max-width: none;
     }
 }
 
 @media (max-width: 400px) {
-    .movie-title {
-        font-size: 10px;
-    }
-    .movie-year {
-        font-size: 9px;
-    }
     .filtered-movies-grid {
         grid-template-columns: 1fr;
     }
-    .news-page-title {
-        font-size: 24px;
-    }
-}
-
-/* Убираем скролл при открытых модалках */
-body.modal-open {
-    overflow: hidden;
 }
