@@ -662,7 +662,7 @@ body {
     color: #aaa;
 }
 
-/* ========== ПОИСКОВОЕ МОДАЛЬНОЕ ОКНО (как в вашем старом CSS) ========== */
+/* ========== ПОИСКОВОЕ МОДАЛЬНОЕ ОКНО ========== */
 .search-modal {
     display: none;
     position: fixed;
@@ -822,7 +822,6 @@ body {
     font-size: 12px;
     color: #888;
 }
-
 /* ========== ТОСТЫ ========== */
 .toast-container {
     position: fixed;
