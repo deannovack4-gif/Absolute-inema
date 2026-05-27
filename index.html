@@ -1229,7 +1229,7 @@ function renderSuggestions(movies) {
         // Обработчик ошибки загрузки картинки
         const img = suggestionItem.querySelector('.suggestion-poster');
         img.onerror = function() {
-            this.src = 'images/placeholder.jpg'; // создайте любой заглушечный файл в папке images
+            this.src = 'images/placeholder.png'; // создайте любой заглушечный файл в папке images
             this.onerror = null;
         };
         suggestionItem.addEventListener('click', () => {
