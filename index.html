@@ -1223,21 +1223,38 @@ function renderSuggestions(movies) {
                 <div class="suggestion-year">${movie.year}</div>
             </div>
         `;
+        // Обработчик ошибки загрузки картинки
+        const img = suggestionItem.querySelector('.suggestion-poster');
+        img.onerror = function() {
+            this.src = 'images/placeholder.jpg'; // запасная картинка (можно создать пустую)
+            this.onerror = null; // чтобы не зациклить
+        };
         suggestionItem.addEventListener('click', () => {
             if (movie.url && movie.url !== 'index.html') {
-                // Переход на другую страницу
                 window.location.href = movie.url;
             } else if (movie.element) {
-                // Фильм из каталога - прокручиваем к нему
                 closeSearchModalFunc();
-                
-                // Раскрываем каталог если он свернут
                 const filteredMoviesGridEl = document.getElementById('filteredMoviesGrid');
                 const moviesGridOverlay = document.getElementById('moviesGridOverlay');
                 if (filteredMoviesGridEl && moviesGridOverlay) {
                     filteredMoviesGridEl.classList.add('expanded');
                     moviesGridOverlay.classList.add('hidden');
                 }
+                setTimeout(() => {
+                    movie.element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    movie.element.style.boxShadow = '0 0 20px #D6B538';
+                    movie.element.style.transition = 'box-shadow 0.3s ease';
+                    setTimeout(() => {
+                        movie.element.style.boxShadow = '';
+                    }, 2000);
+                }, 300);
+            } else {
+                closeSearchModalFunc();
+            }
+        });
+        suggestionsList.appendChild(suggestionItem);
+    });
+}
                 
                 // Прокручиваем к элементу
                 setTimeout(() => {
