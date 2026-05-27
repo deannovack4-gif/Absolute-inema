@@ -423,7 +423,7 @@ body {
     background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
 }
 
-/* Центрирование кнопки фильтров */
+/* Центрирование кнопки "фильтры" */
 .filters-header {
     text-align: center;
     margin-bottom: 30px;
@@ -443,6 +443,7 @@ body {
     align-items: center;
     gap: 8px;
     box-shadow: 0 2px 8px rgba(214, 180, 56, 0.3);
+    font-family: 'M PLUS 1', sans-serif;
 }
 
 .filters-toggle-btn:hover {
@@ -462,6 +463,7 @@ body {
     letter-spacing: 2px;
 }
 
+/* Модальное окно фильтров */
 .filter-modal {
     display: none;
     position: fixed;
@@ -482,11 +484,64 @@ body {
 
 .filter-modal-content {
     background: #1a1a1a;
-    border-radius: 25px;
+    border-radius: 24px;
     max-width: 500px;
     width: 90%;
     padding: 30px;
     border: 1px solid #D6B538;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: modalSlideIn 0.3s ease;
+    position: relative;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.filter-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #D6B538;
+}
+
+.filter-modal-header h3 {
+    font-family: 'Rimma', sans-serif;
+    font-size: 26px;
+    color: #D6B538;
+    margin: 0;
+    letter-spacing: 1px;
+}
+
+.close-modal-btn {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 32px;
+    cursor: pointer;
+    transition: color 0.2s;
+    line-height: 1;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-modal-btn:hover {
+    color: #D6B538;
+    background: rgba(214, 180, 56, 0.1);
 }
 
 .filter-options {
@@ -496,18 +551,36 @@ body {
     margin-bottom: 30px;
 }
 
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
 .filter-group label {
-    color: #D6B538;
     font-weight: bold;
+    color: #D6B538;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'M PLUS 1', sans-serif;
 }
 
 .filter-group select {
-    padding: 12px;
+    padding: 12px 15px;
     background: #2a2a2a;
     border: 1px solid #444;
     border-radius: 12px;
     color: #fff;
-    width: 100%;
+    font-family: 'M PLUS 1', sans-serif;
+    font-size: 14px;
+    cursor: pointer;
+    transition: border-color 0.2s;
+}
+
+.filter-group select:focus {
+    border-color: #D6B538;
+    outline: none;
 }
 
 .filter-actions {
@@ -516,11 +589,15 @@ body {
     justify-content: center;
 }
 
-.apply-filters-btn, .reset-filters-btn {
+.apply-filters-btn,
+.reset-filters-btn {
     padding: 12px 30px;
+    border: none;
     border-radius: 40px;
+    font-family: 'M PLUS 1', sans-serif;
     font-weight: bold;
     cursor: pointer;
+    transition: all 0.2s;
 }
 
 .apply-filters-btn {
@@ -528,11 +605,22 @@ body {
     color: #000;
 }
 
+.apply-filters-btn:hover {
+    background: #e6c45e;
+    transform: scale(1.02);
+}
+
 .reset-filters-btn {
     background: #333;
     color: #fff;
 }
 
+.reset-filters-btn:hover {
+    background: #444;
+    transform: scale(1.02);
+}
+
+/* Каталог (сетка фильмов) */
 .filtered-movies {
     margin-top: 50px;
     position: relative;
@@ -574,11 +662,16 @@ body {
     box-shadow: 0 10px 25px rgba(214, 180, 56, 0.2);
 }
 
+.filtered-movie-info {
+    margin-top: 12px;
+}
+
 .filtered-movie-title {
     font-weight: bold;
     font-size: 14px;
     color: #fff;
     margin-top: 8px;
+    line-height: 1.3;
 }
 
 .filtered-movie-year {
@@ -586,6 +679,7 @@ body {
     color: #D6B538;
 }
 
+/* Оверлей и кнопка "Показать все" */
 .movies-grid-overlay {
     position: absolute;
     bottom: 0;
@@ -594,6 +688,12 @@ body {
     height: 300px;
     pointer-events: none;
     z-index: 10;
+    transition: opacity 0.3s ease;
+}
+
+.movies-grid-overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .overlay-gradient {
@@ -616,12 +716,39 @@ body {
     padding: 14px 32px;
     border-radius: 30px;
     cursor: pointer;
+    font-family: 'M PLUS 1', sans-serif;
+    font-size: 16px;
     font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: all 0.3s ease;
+    pointer-events: auto;
     backdrop-filter: blur(8px);
     z-index: 11;
     white-space: nowrap;
 }
 
+.show-all-btn:hover {
+    background: rgba(214, 180, 56, 0.3);
+    box-shadow: 0 4px 20px rgba(214, 180, 56, 0.3);
+    transform: translateX(-50%) translateY(-2px);
+}
+
+.show-all-text {
+    text-transform: lowercase;
+    letter-spacing: 0.5px;
+}
+
+.show-all-arrow {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.3s ease;
+}
+
+.show-all-btn:hover .show-all-arrow {
+    transform: rotate(180deg);
+}
 /* ========== НОВОСТИ ========== */
 .news-page {
     background: linear-gradient(180deg, #000000 0%, #0a0a0a 100%);
