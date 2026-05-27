@@ -1259,3 +1259,14 @@ body.modal-open {
 .action-btn:hover .action-icon {
     stroke: #000000;
 }
+
+/* Центрирование кнопки "фильтры" */
+.filters-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.filters-toggle-btn {
+    /* остальные стили уже есть, можно оставить */
+    display: inline-flex;  /* или inline-block, чтобы кнопка не растягивалась на всю ширину */
+}
