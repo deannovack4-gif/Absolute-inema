@@ -1228,3 +1228,34 @@ body {
 body.modal-open {
     overflow: hidden;
 }
+
+/* Улучшенные кнопки слайдера со стрелками */
+.action-btn {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #D6B538;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 10px;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(4px);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    background: rgba(214, 180, 56, 0.5);
+    transform: scale(1.1);
+    border-color: #ffd966;
+}
+
+.action-icon {
+    display: block;
+    stroke: #ffffff;
+    fill: none;
+    transition: stroke 0.2s;
+}
+
+.action-btn:hover .action-icon {
+    stroke: #000000;
+}
